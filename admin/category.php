@@ -56,27 +56,33 @@
                             <th>Xóa</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr>
-                            <th scope="row">1</th>
-                            <td>Nhạc trữ tình</td>
-                            <td>
-                                <a href="edit_category.php?id=1"><i class="fa-solid fa-pen-to-square"></i></a>
-                            </td>
-                            <td>
-                                <a href=""><i class="fa-solid fa-trash"></i></a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">2</th>
-                            <td>Nhạc cách mạng</td>
-                            <td>
-                                <a href="edit_category.php?id=2"><i class="fa-solid fa-pen-to-square"></i></a>
-                            </td>
-                            <td>
-                                <a href=""><i class="fa-solid fa-trash"></i></a>
-                            </td>
-                        </tr>
+                    <>
+                
+    <?php
+    include 'connect.php'; // Kết nối CSDL
+
+    // Truy vấn lấy danh sách thể loại
+    $sql = "SELECT ma_tloai, ten_tloai FROM theloai";
+    $result = $conn->query($sql);
+
+    if ($result->num_rows > 0) {
+        // Hiển thị thể loại
+        while($row = $result->fetch_assoc()) {
+            echo "<tr>";
+            echo "<th scope='row'>" . $row['ma_tloai'] . "</th>";
+            echo "<td>" . $row['ten_tloai'] . "</td>";
+            echo "<td><a href='edit_category.php?id=" . $row['ma_tloai'] . "'><i class='fa-solid fa-pen-to-square'></i></a></td>";
+            echo "<td><a href='delete_category.php?id=" . $row['ma_tloai'] . "'><i class='fa-solid fa-trash'></i></a></td>";
+            echo "</tr>";
+        }
+    } else {
+        echo "<tr><td colspan='4'>Không có thể loại nào.</td></tr>";
+    }
+
+    $conn->close();
+    ?>
+
+
                        
                     </tbody>
                 </table>
