@@ -47,14 +47,24 @@
         <div class="row">
             <div class="col-sm">
                 <h3 class="text-center text-uppercase fw-bold">Thêm mới thể loại</h3>
-                <form action="process_add_category.php" method="post">
+                <form method="GET">
                     <div class="input-group mt-3 mb-3">
                         <span class="input-group-text" id="lblCatName">Tên thể loại</span>
-                        <input type="text" class="form-control" name="txtCatName" >
-                    </div>
+                        <input type="text" formmethod="GET" class="form-control" name="txtCatName" >
 
+                    </div>
                     <div class="form-group  float-end ">
-                        <input type="submit" value="Thêm" class="btn btn-success">
+                        <input type="submit" formmethod="GET" value="Thêm" class="btn btn-success">
+                        <?php
+                            include("../database.php");
+                            if($_SERVER["REQUEST_METHOD"] == "GET" && isset($_GET["txtCatName"])){
+                                $newCat = $_GET["txtCatName"];
+                                $query = "INSERT INTO theloai (ten_tloai) VALUES ('$newCat')";
+                                mysqli_query($conn, $query);
+                                header("location: category.php");
+                            }
+                        ?>
+
                         <a href="category.php" class="btn btn-warning ">Quay lại</a>
                     </div>
                 </form>
@@ -66,4 +76,4 @@
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js" integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN" crossorigin="anonymous"></script>
 </body>
-</html>
+</html>           
