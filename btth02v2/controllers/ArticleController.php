@@ -1,24 +1,76 @@
 <?php
-class ArticleController{
-    // Hàm xử lý hành động index
-    public function index(){
-        // Nhiệm vụ 1: Tương tác với Services/Models
-        echo "Tương tác với Services/Models from Article";
-        // Nhiệm vụ 2: Tương tác với View
-        echo "Tương tác với View from Article";
+require_once '../models/Article.php';
+
+class ArticleController {
+    private $articleModel;
+    
+    public function __construct() {
+        $this->articleModel = new Article();
     }
 
-    public function add(){
-        // Nhiệm vụ 1: Tương tác với Services/Models
-        // echo "Tương tác với Services/Models from Article";
-        // Nhiệm vụ 2: Tương tác với View
-        include("views/article/add_article.php");
+    public function index() {
+        $articles = $this->articleModel->getAll();
+        require '../views/article.php'; // Hiển thị danh sách bài viết
     }
 
-    public function list(){
-        // Nhiệm vụ 1: Tương tác với Services/Models
-        // echo "Tương tác với Services/Models from Article";
-        // Nhiệm vụ 2: Tương tác với View
-        include("views/article/list_article.php");
+    // Thêm bài viết
+    public function add() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $title = $_POST['title'] ?? '';
+            $summary = $_POST['summary'] ?? '';
+            $category_id = $_POST['ma_tloai'] ?? '';
+            $author_id = $_POST['ma_tgia'] ?? '';
+
+            $success = $this->articleModel->addArticle($title, $summary, $category_id, $author_id);
+
+            if ($success) {
+                header("Location: ../views/article.php?success=Thêm bài viết thành công");
+                exit();
+            } else {
+                header("Location: ../views/add_article.php?error=Có lỗi xảy ra khi thêm bài viết.");
+                exit();
+            }
+        }
+    }
+
+    // Lấy bài viết theo ID
+    public function getArticleById($id) {
+        return $this->articleModel->getById($id);
+    }
+
+    // Cập nhật bài viết
+    public function update() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $articleId = $_POST['articleId'] ?? '';
+            $title = $_POST['title'] ?? '';
+            $summary = $_POST['summary'] ?? '';
+
+            if ($this->articleModel->updateArticle($articleId, $title, $summary)) {
+                header("Location: ../views/article.php?success=Cập nhật bài viết thành công");
+                exit();
+            } else {
+                header("Location: ../views/edit_article.php?id=$articleId&error=Có lỗi xảy ra khi cập nhật bài viết.");
+                exit();
+            }
+        }
+    }
+
+    // Xóa bài viết
+    public function delete($id) {
+        // Kiểm tra xem bài viết có tồn tại không
+        if ($this->articleModel->exists($id)) {
+            // Thực hiện xóa bài viết
+            if ($this->articleModel->deleteArticle($id)) {
+                header("Location: ../views/article.php?success=Xóa bài viết thành công.");
+            } else {
+                header("Location: ../views/article.php?error=Lỗi khi xóa bài viết.");
+            }
+        } else {
+            header("Location: ../views/article.php?error=Bài viết không tồn tại.");
+        }
+        exit();
     }
 }
+
+
+?>
